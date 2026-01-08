@@ -1,5 +1,6 @@
 export class Ship {
     constructor(length, hitTimes=0, sunk=false) {
+        this.id = crypto.randomUUID();
         this.length = length;
         this.hitTimes = hitTimes;
         this.sunk = sunk;
