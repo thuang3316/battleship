@@ -1,6 +1,6 @@
 import { Ship } from "./ship";
 
-class GameBoard {
+export class GameBoard {
     constructor() {
         this.board = Array(10).fill(null).map(()=> Array(10).fill(''));
         this.fleet = [new Ship(2), new Ship(3), new Ship(4), new Ship(4), new Ship(5)];
@@ -111,6 +111,18 @@ class GameBoard {
 
     isGameOver() {
         return this.fleet.every(ship => ship.sunk);
+    }
+
+    renderBoard(forOpponent = false) {
+        return this.board.map(row => 
+            row.map(cell => {
+                if (cell === '') return '.';
+                if (cell === 'hit') return 'X';
+                if (cell === 'miss') return 'O';
+                if (!forOpponent) return 'S'; // show ship for self
+                return '.'; // hide opponent ships
+            })
+        );
     }
 
 }
