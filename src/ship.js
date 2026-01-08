@@ -1,5 +1,5 @@
 export class Ship {
-    constructor(length, hitTimes=0, sunk=false) {
+    constructor(length) {
         this.id = crypto.randomUUID();
         this.length = length;
         this.hitTimes = hitTimes;
@@ -15,9 +15,15 @@ export class Ship {
     }
 
     isSunk() {
-        // judge if a ship is sunk+
-        if (this.hitTimes === this.length) {
+        // judge if a ship is sunk
+        if (this.hitTimes >= this.length) {
             this.sunk = true;
         }
+    }
+
+    resetShip() {
+        // reset a ship to its initial status
+        this.hitTimes = 0;
+        this.sunk = false;
     }
 }
