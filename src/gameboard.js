@@ -3,7 +3,7 @@ import { Ship } from "./ship";
 class GameBoard {
     constructor() {
         this.board = Array(10).fill(null).map(()=> Array(10).fill(''));
-        this.fleet = [new Ship(3), new Ship(4), new Ship(4), new Ship(5)];
+        this.fleet = [new Ship(2), new Ship(3), new Ship(4), new Ship(4), new Ship(5)];
     }
 
     // helper functions
