@@ -1,6 +1,3 @@
-import { Player, ComputerPlayer } from "./player";
-import { GameBoard } from "./gameboard";
-
 export class GameController {
     constructor(player1, player2) {
         this.currentPlayer = player1;
