@@ -1,0 +1,66 @@
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+}
+
+.boards-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 100px;
+}
+
+/* Keep this in styles.css */
+.cell {
+  width: 30px;
+  height: 30px;
+  border: 1px solid black;  /* border visible */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  background-color: #f7f7f7;
+  cursor: pointer;
+}
+
+/* Optional: different colors */
+.cell.hit {
+  background-color: #d00000;
+  color: white;
+}
+
+.cell.miss {
+  background-color: #caf0f8;
+}
+
+.cell.ship {
+  background-color: #0077b6; /* show only on human board */
+  border: 2px solid #023e8a;
+}
+
+/* Labels */
+.label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  background-color: #023e8a;
+  color: white;
+}
+
+#start-btn {
+    width: 100px;
+    height: 40px;
+    font-size: 20px;
+    border-radius: 5px;
+}
+
+#start-btn:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+}

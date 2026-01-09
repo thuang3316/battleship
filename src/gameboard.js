@@ -116,13 +116,12 @@ export class GameBoard {
     renderBoard(forOpponent = false) {
         return this.board.map(row => 
             row.map(cell => {
-                if (cell === '') return '.';
+                if (cell === '') return '';
                 if (cell === 'hit') return 'X';
                 if (cell === 'miss') return 'O';
                 if (!forOpponent) return 'S'; // show ship for self
-                return '.'; // hide opponent ships
+                return ''; // hide opponent ships
             })
         );
     }
-
 }
