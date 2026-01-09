@@ -14,6 +14,30 @@ export class GameBoard {
         }
     }
 
+    hasAdjacentShip(x, y) {
+        // check the number of adjacent ships given x and y
+        let ans = 0;
+        const directions = [
+            [-1,  0], [1,  0], [0, -1], [0,  1], 
+            [-1, -1], [-1, 1], [1, -1], [1, 1]  
+        ];
+
+        for (const [dx, dy] of directions) {
+            const nx = x + dx;
+            const ny = y + dy;
+
+            if (
+                nx >= 0 && nx < this.board.length &&
+                ny >= 0 && ny < this.board[0].length &&
+                this.board[nx][ny] !== ''
+            ) {
+                ans++;
+            }
+        }
+
+        return ans;
+    }
+
     isLegal(x, y) {
         // showcase whether a coordinate is illegal or not
         return (
@@ -21,7 +45,8 @@ export class GameBoard {
             x < 10 &&
             y >= 0 &&
             y < 10 &&
-            this.board[x][y] === ''
+            this.board[x][y] === '' &&
+            this.hasAdjacentShip(x, y) === 0
         );
     }
 
@@ -111,17 +136,5 @@ export class GameBoard {
 
     isGameOver() {
         return this.fleet.every(ship => ship.sunk);
-    }
-
-    renderBoard(forOpponent = false) {
-        return this.board.map(row => 
-            row.map(cell => {
-                if (cell === '') return '';
-                if (cell === 'hit') return 'X';
-                if (cell === 'miss') return 'O';
-                if (!forOpponent) return 'S'; // show ship for self
-                return ''; // hide opponent ships
-            })
-        );
     }
 }
