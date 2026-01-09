@@ -90,6 +90,9 @@ export class GameBoard {
         for (let i=0; i<ship.length; i++) {
             this.board[x+dx*i][y+dy*i] = ship.id;
         }
+        
+        // record ship coordinates
+        [ship.col, ship.row, ship.dir] = [x, y, direction];
 
         return true;
     }

@@ -4,6 +4,9 @@ export class Ship {
         this.length = length;
         this.hitTimes = 0;
         this.sunk = false;
+        this.col = null;
+        this.row = null;
+        this.dir = null;
     }
 
     hit() {

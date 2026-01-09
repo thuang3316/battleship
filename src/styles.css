@@ -53,14 +53,22 @@ body {
   color: white;
 }
 
-#start-btn {
-    width: 100px;
-    height: 40px;
-    font-size: 20px;
-    border-radius: 5px;
+.playerShip {
+  background-color: #ecd5aa;
 }
 
-#start-btn:hover {
-    cursor: pointer;
-    transform: scale(1.05);
+.computerShip {
+  background-color: aquamarine;
+}
+
+.available:hover {
+  background-color: #dbdada;
+}
+
+.computerShip.available:hover {
+  background-color: rgb(110, 224, 186);
+}
+
+.cell.ship.sunk {
+  background-color: #5ba7ca;
 }
