@@ -1,74 +1,451 @@
+/* ── Variables ─────────────────────────────────────────────────────── */
+:root {
+    --ocean-deep:   #020c1b;
+    --ocean-mid:    #0a1f3d;
+    --ocean-light:  #0d2f5c;
+    --accent:       #00d4ff;
+    --accent-glow:  rgba(0, 212, 255, 0.3);
+    --hit-red:      #ff3333;
+    --hit-glow:     rgba(255, 51, 51, 0.4);
+    --miss-blue:    #4488cc;
+    --ship-color:   #2a6496;
+    --ship-border:  #5ba3d0;
+    --text:         #c8e6ff;
+    --mono:         'Share Tech Mono', monospace;
+    --display:      'Bebas Neue', sans-serif;
+}
+
+/* ── Reset ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Body ──────────────────────────────────────────────────────────── */
 body {
     min-height: 100vh;
+    background-color: var(--ocean-deep);
+    background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(10, 31, 61, 0.8) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(0, 212, 255, 0.05) 0%, transparent 50%),
+        repeating-linear-gradient(0deg,   transparent, transparent 60px, rgba(0,212,255,0.02) 60px, rgba(0,212,255,0.02) 61px),
+        repeating-linear-gradient(90deg,  transparent, transparent 60px, rgba(0,212,255,0.02) 60px, rgba(0,212,255,0.02) 61px);
+    font-family: var(--mono);
+    color: var(--text);
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    gap: 40px;
+    padding: 20px;
+    gap: 16px;
+    overflow-x: hidden;
 }
 
+/* CRT scanline overlay */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* ── Header ────────────────────────────────────────────────────────── */
+header { text-align: center; }
+
+header h1 {
+    font-family: var(--display);
+    font-size: clamp(3rem, 8vw, 6rem);
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-shadow: 0 0 30px var(--accent-glow), 0 0 60px rgba(0,212,255,0.15);
+    line-height: 1;
+}
+
+header p {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    color: rgba(200, 230, 255, 0.4);
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+/* ── Status Bar ────────────────────────────────────────────────────── */
+#status-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(0, 212, 255, 0.05);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    padding: 10px 24px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#status-message {
+    color: var(--accent);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    min-width: 220px;
+    text-align: center;
+}
+
+.divider   { color: rgba(0, 212, 255, 0.3); }
+.stat-label { color: rgba(200, 230, 255, 0.5); }
+.stat-val   { color: var(--accent); font-weight: bold; }
+
+/* ── Fleet Tracker ─────────────────────────────────────────────────── */
+#fleet-tracker {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.fleet-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+}
+
+.fleet-title {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(200, 230, 255, 0.4);
+    margin-bottom: 4px;
+}
+
+.ship-row {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+}
+
+.ship-name {
+    font-size: 0.6rem;
+    color: rgba(200, 230, 255, 0.4);
+    letter-spacing: 0.1em;
+    margin-right: 4px;
+    width: 48px;
+    text-align: right;
+}
+
+.ship-block {
+    width: 18px;
+    height: 18px;
+    border-radius: 2px;
+    border: 1px solid rgba(91, 163, 208, 0.5);
+    background: var(--ship-color);
+    transition: all 0.3s;
+}
+
+.ship-block.sunk-block {
+    background: #0d1f30;
+    border-color: rgba(91, 163, 208, 0.2);
+    opacity: 0.4;
+}
+
+/* ── Boards Container ──────────────────────────────────────────────── */
 .boards-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: clamp(20px, 5vw, 80px);
+    flex-wrap: wrap;
+}
+
+.board-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    animation: fadeIn 0.5s ease both;
+}
+
+.board-label {
+    font-family: var(--display);
+    font-size: 1.4rem;
+    letter-spacing: 0.2em;
+    color: rgba(200, 230, 255, 0.5);
+}
+
+/* ── Grid / Cells ──────────────────────────────────────────────────── */
+.axis-label {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 100px;
+    font-size: 0.6rem;
+    color: rgba(200, 230, 255, 0.35);
+    letter-spacing: 0.1em;
 }
 
-/* Keep this in styles.css */
 .cell {
-  width: 30px;
-  height: 30px;
-  border: 1px solid black;  /* border visible */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 16px;
-  background-color: #f7f7f7;
-  cursor: pointer;
+    width: 28px;
+    height: 28px;
+    border: 1px solid rgba(0, 212, 255, 0.12);
+    background: rgba(10, 31, 61, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-radius: 2px;
+    transition: background 0.15s, border-color 0.15s;
 }
 
-/* Optional: different colors */
-.cell.hit {
-  background-color: #d00000;
-  color: white;
-}
-
-.cell.miss {
-  background-color: #caf0f8;
-}
-
+/* Player ships */
 .cell.ship {
-  background-color: #0077b6; /* show only on human board */
-  border: 2px solid #023e8a;
+    background: var(--ship-color);
+    border-color: var(--ship-border);
+    box-shadow: inset 0 0 6px rgba(0, 212, 255, 0.2);
 }
 
-/* Labels */
-.label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  background-color: #023e8a;
-  color: white;
+/* Hit */
+.cell.hit {
+    background: var(--hit-red);
+    border-color: #ff6666;
+    box-shadow: 0 0 10px var(--hit-glow), inset 0 0 8px rgba(255,100,100,0.3);
+    animation: hitPulse 0.5s ease-out;
+}
+.cell.hit::after {
+    content: '✕';
+    color: white;
+    font-size: 14px;
+    font-weight: 900;
 }
 
-.playerShip {
-  background-color: #ecd5aa;
+/* Miss */
+.cell.miss {
+    background: rgba(68, 136, 204, 0.15);
+    border-color: rgba(68, 136, 204, 0.4);
+}
+.cell.miss::after {
+    content: '·';
+    color: var(--miss-blue);
+    font-size: 22px;
+    line-height: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -40%);
 }
 
-.computerShip {
-  background-color: aquamarine;
+/* Sunk */
+.cell.sunk {
+    background: #0d1a2a;
+    border-color: rgba(91, 163, 208, 0.3);
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
+}
+.cell.sunk::after {
+    content: '✕';
+    color: rgba(255, 80, 80, 0.5);
+    font-size: 12px;
 }
 
-.available:hover {
-  background-color: #dbdada;
+/* Attackable cells */
+.cell.available { cursor: crosshair; }
+.cell.available:hover {
+    background: rgba(0, 212, 255, 0.15);
+    border-color: rgba(0, 212, 255, 0.5);
+    box-shadow: 0 0 8px var(--accent-glow);
 }
 
-.computerShip.available:hover {
-  background-color: rgb(110, 224, 186);
+/* Placement preview */
+.cell.place-target { cursor: pointer; }
+.cell.place-preview {
+    background: rgba(0, 212, 255, 0.2) !important;
+    border-color: var(--accent) !important;
+}
+.cell.place-preview.invalid-preview {
+    background: rgba(255, 50, 50, 0.2) !important;
+    border-color: #ff5555 !important;
 }
 
-.cell.ship.sunk {
-  background-color: #5ba7ca;
+/* ── Placement Panel ───────────────────────────────────────────────── */
+#placement-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid rgba(0, 212, 255, 0.15);
+    background: rgba(10, 31, 61, 0.5);
+    border-radius: 6px;
+    min-width: 220px;
+}
+
+#placement-panel h3 {
+    font-family: var(--display);
+    letter-spacing: 0.2em;
+    font-size: 1.1rem;
+    color: var(--accent);
+}
+
+#dir-toggle {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: rgba(200, 230, 255, 0.5);
+}
+
+#dir-toggle button {
+    font-family: var(--mono);
+    background: rgba(0, 212, 255, 0.08);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    color: var(--accent);
+    padding: 4px 10px;
+    font-size: 0.65rem;
+    cursor: pointer;
+    border-radius: 3px;
+    letter-spacing: 0.1em;
+    transition: background 0.15s;
+}
+#dir-toggle button:hover { background: rgba(0, 212, 255, 0.18); }
+
+.ship-select-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+}
+
+.ship-select-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border: 1px solid rgba(0, 212, 255, 0.15);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(200, 230, 255, 0.7);
+    transition: all 0.2s;
+}
+.ship-select-item:hover:not(.placed) {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0, 212, 255, 0.07);
+}
+.ship-select-item.selected-ship {
+    border-color: var(--accent);
+    background: rgba(0, 212, 255, 0.12);
+    color: var(--accent);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.1);
+}
+.ship-select-item.placed {
+    opacity: 0.35;
+    cursor: default;
+    text-decoration: line-through;
+}
+
+.ship-blocks-preview { display: flex; gap: 2px; }
+.mini-block {
+    width: 10px;
+    height: 10px;
+    background: var(--ship-color);
+    border: 1px solid var(--ship-border);
+    border-radius: 1px;
+}
+.ship-select-item.placed .mini-block { background: #1a3a5c; }
+
+.btn.restart {
+    width: auto;
+    padding: 4px 14px;
+    font-size: 0.65rem;
+    border-color: rgba(0, 212, 255, 0.5);
+    color: rgba(0, 212, 255, 0.7);
+}
+.btn.restart:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.15);
+}
+
+/* ── Buttons ───────────────────────────────────────────────────────── */
+.btn {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    border: 1px solid var(--accent);
+    background: transparent;
+    color: var(--accent);
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+    width: 100%;
+}
+.btn:hover { background: rgba(0, 212, 255, 0.12); box-shadow: 0 0 15px rgba(0,212,255,0.2); }
+.btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.btn.danger { border-color: #ff5555; color: #ff5555; }
+.btn.danger:hover { background: rgba(255, 85, 85, 0.1); }
+
+/* ── Dialog ────────────────────────────────────────────────────────── */
+dialog {
+    background: var(--ocean-mid);
+    border: 1px solid var(--accent);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 40px 60px;
+    text-align: center;
+    box-shadow: 0 0 60px rgba(0, 212, 255, 0.2);
+    font-family: var(--mono);
+    max-width: 400px;
+}
+
+dialog::backdrop {
+    background: rgba(2, 12, 27, 0.85);
+    backdrop-filter: blur(4px);
+}
+
+dialog h2 {
+    font-family: var(--display);
+    font-size: 3rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 12px;
+}
+dialog h2.win  { color: var(--accent);   text-shadow: 0 0 30px var(--accent-glow); }
+dialog h2.lose { color: var(--hit-red);  text-shadow: 0 0 30px var(--hit-glow); }
+
+dialog p {
+    font-size: 0.75rem;
+    color: rgba(200, 230, 255, 0.5);
+    letter-spacing: 0.15em;
+    margin-bottom: 24px;
+}
+
+dialog button {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    padding: 10px 32px;
+    border: 1px solid var(--accent);
+    background: transparent;
+    color: var(--accent);
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+}
+dialog button:hover {
+    background: rgba(0, 212, 255, 0.15);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+}
+
+/* ── Animations ────────────────────────────────────────────────────── */
+@keyframes hitPulse {
+    0%   { transform: scale(1.3); box-shadow: 0 0 25px var(--hit-glow); }
+    100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
 }

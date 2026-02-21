@@ -2,8 +2,14 @@ import { Ship } from "./ship";
 
 export class GameBoard {
     constructor() {
-        this.board = Array(10).fill(null).map(()=> Array(10).fill(''));
-        this.fleet = [new Ship(2), new Ship(3), new Ship(4), new Ship(4), new Ship(5)];
+        this.board = Array(10).fill(null).map(() => Array(10).fill(''));
+        this.fleet = [
+            new Ship(5, 'Carrier'),
+            new Ship(4, 'Battleship'),
+            new Ship(4, 'Cruiser'),
+            new Ship(3, 'Submarine'),
+            new Ship(2, 'Destroyer'),
+        ];
     }
 
     // helper functions
@@ -72,6 +78,16 @@ export class GameBoard {
     }
 
     // methods
+    canPlace(ship, coord, direction) {
+        // check if a ship can be placed without mutating the board
+        const [x, y] = coord;
+        const [dx, dy] = direction;
+        for (let i = 0; i < ship.length; i++) {
+            if (!this.isLegal(x + dx * i, y + dy * i)) return false;
+        }
+        return true;
+    }
+
     placeShip(ship, coord, direction) {
         // e.g. coord = [3,4], representing the coordinate of the head of the ship
         // direction should be [0,1], [0,-1], [1,0] or [-1,0]

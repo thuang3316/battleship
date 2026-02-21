@@ -4,6 +4,8 @@ export class GameController {
         this.waitingPlayer = player2;
         this.gameOver = false;
         this.winner = null;
+        this.humanHits = 0;
+        this.enemySunk = 0;
     }
 
     playTurn(x = null, y = null) {
@@ -14,6 +16,14 @@ export class GameController {
             x,
             y
         );
+
+        // Track human stats
+        if (x !== null && (result === 'hit' || result === 'sunk')) {
+            this.humanHits++;
+        }
+        if (x !== null && result === 'sunk') {
+            this.enemySunk++;
+        }
 
         if (this.waitingPlayer.gameBoard.isGameOver()) {
             this.gameOver = true;
@@ -31,8 +41,7 @@ export class GameController {
     }
 
     startGame() {
-        this.currentPlayer.gameBoard.placeBoard();
+        // Only place computer board here; human places manually
         this.waitingPlayer.gameBoard.placeBoard();
     }
-
 }
